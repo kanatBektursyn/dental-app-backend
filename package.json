@@ -7,7 +7,7 @@
     "test": "nodemon index.js",
     "start": "node index.js"
   },
-  "author": "",
+  "author": "Kanat Bektursyn",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
