@@ -1,5 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const db = require("./core/db");
 const {
@@ -14,6 +17,9 @@ app.use(cors());
 
 app.get("/patients", PatientCtrl.all);
 app.post("/patients", patientValidation.create, PatientCtrl.create);
+app.delete("/patients/:id", PatientCtrl.remove);
+app.patch("/patients/:id", patientValidation.update, PatientCtrl.update);
+app.get("/patients/:id", PatientCtrl.show);
 
 app.get("/appointments", AppointmentCtrl.all);
 app.post("/appointments", appointmentValidation.create, AppointmentCtrl.create);

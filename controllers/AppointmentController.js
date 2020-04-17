@@ -1,10 +1,31 @@
 const { Appointment, Patient } = require("../models");
 const { validationResult } = require("express-validator");
+const dayjs = require("dayjs");
+
+var axios = require("axios");
+var querystring = require("querystring");
 
 function AppointmentController() {}
 
+const sendSMS = function ({ number, text, time }) {
+  this.API_ID = process.env.SMS_TOKEN;
+  this.isTest = process.env.DEVELOPMENT === "TRUE";
+
+  var params = {
+    api_id: this.API_ID,
+    to: number,
+    msg: text,
+    time: time,
+    json: 1,
+    test: +this.isTest,
+  };
+
+  return axios.get(`https://sms.ru/sms/send?${querystring.stringify(params)}`);
+};
+
 const create = async function (req, res) {
   const errors = validationResult(req);
+  let patient;
 
   const data = {
     patient: req.body.patient,
@@ -23,7 +44,7 @@ const create = async function (req, res) {
   }
 
   try {
-    await Patient.findOne({ _id: data.patient });
+    patient = await Patient.findOne({ _id: data.patient });
   } catch (e) {
     return res.status(404).json({
       success: false,
@@ -38,9 +59,47 @@ const create = async function (req, res) {
         message: err,
       });
     }
+
+    const delayedTime = dayjs(
+      `${data.date.split(".").reverse().join(".")}T${data.time}`
+    )
+      .subtract(1, "minute")
+      .unix();
+
+    sendSMS({
+      number: patient.phone,
+      time: delayedTime,
+      text: `${patient.fullname}, напоминаем Вам, что сегодня в ${data.time} у вас приём в стоматологии`,
+    });
+
     res.status(201).json({
       success: true,
       message: doc,
+    });
+  });
+};
+
+const remove = async function (req, res) {
+  const id = req.params.id;
+
+  try {
+    await Appointment.findOne({ _id: id });
+  } catch (e) {
+    return res.status(404).json({
+      success: false,
+      message: "APPOINTMENT_NOT_FOUND",
+    });
+  }
+
+  Appointment.deleteOne({ _id: id }, (err) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: err,
+      });
+    }
+    res.json({
+      status: "success",
     });
   });
 };
@@ -82,32 +141,6 @@ const update = async function (req, res) {
     }
     res.status(200).json({
       success: true,
-      message: doc,
-    });
-  });
-};
-
-const remove = async function (req, res) {
-  const id = req.params.id;
-
-  try {
-    await Appointment.findOne({ _id: id });
-  } catch (e) {
-    return res.status(404).json({
-      success: false,
-      message: "APPOINTMENT_NOT_FOUND",
-    });
-  }
-
-  Appointment.deleteOne({ _id: id }, (err) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: err,
-      });
-    }
-    res.json({
-      status: "success",
     });
   });
 };

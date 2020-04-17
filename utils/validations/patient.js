@@ -5,6 +5,10 @@ const validation = {
     check("fullname").isLength({ min: 6 }),
     check("phone").isLength({ min: 11 }),
   ],
+  update: [
+    check("fullname").isLength({ min: 6 }),
+    check("phone").isLength({ min: 11 }),
+  ],
 };
 
 module.exports = validation;

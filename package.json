@@ -10,12 +10,16 @@
   "author": "Kanat Bektursyn",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
     "cors": "^2.8.5",
+    "dayjs": "^1.8.24",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.4.0",
     "mongo": "^0.1.0",
     "mongod": "^2.0.0",
     "mongoose": "^5.9.7",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "querystring": "^0.2.0"
   }
 }
