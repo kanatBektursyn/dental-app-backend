@@ -1,6 +1,8 @@
 const { Appointment, Patient } = require("../models");
 const { validationResult } = require("express-validator");
 const dayjs = require("dayjs");
+const ruLocal = require("dayjs/locale/ru");
+const { groupBy, reduce } = require("lodash");
 
 var axios = require("axios");
 var querystring = require("querystring");
@@ -158,9 +160,24 @@ const all = function (req, res) {
           });
         }
 
+        const group = groupBy(docs, "date");
+
         res.json({
           success: true,
-          data: docs,
+          data: reduce(
+            group,
+            (result, value, key) => {
+              result = [
+                ...result,
+                {
+                  title: dayjs(key).locale(ruLocal).format("D MMMM"),
+                  data: value,
+                },
+              ];
+              return result;
+            },
+            []
+          ),
         });
       })
     );

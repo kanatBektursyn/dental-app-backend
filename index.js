@@ -5,15 +5,14 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const db = require("./core/db");
+const app = express();
+app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
 const {
   patientValidation,
   appointmentValidation,
 } = require("./utils/validations");
 const { PatientCtrl, AppointmentCtrl } = require("./controllers");
-
-const app = express();
-app.use(express.json());
-app.use(cors());
 
 app.get("/patients", PatientCtrl.all);
 app.post("/patients", patientValidation.create, PatientCtrl.create);
