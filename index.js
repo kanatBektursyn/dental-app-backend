@@ -12,7 +12,7 @@ const {
   patientValidation,
   appointmentValidation,
 } = require("./utils/validations");
-const { PatientCtrl, AppointmentCtrl } = require("./controllers");
+const { PatientCtrl, AppointmentCtrl, MessageCtrl } = require("./controllers");
 
 app.get("/patients", PatientCtrl.all);
 app.post("/patients", patientValidation.create, PatientCtrl.create);
@@ -28,6 +28,9 @@ app.patch(
   appointmentValidation.update,
   AppointmentCtrl.update
 );
+
+app.get("/messages", MessageCtrl.all);
+app.post("/messages", MessageCtrl.create);
 
 app.listen(6666, function (err) {
   if (err) {
