@@ -4,10 +4,10 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const db = require("./core/db");
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
+
 const {
   patientValidation,
   appointmentValidation,
@@ -32,7 +32,7 @@ app.patch(
 app.get("/messages", MessageCtrl.all);
 app.post("/messages", MessageCtrl.create);
 
-app.listen(6666, function (err) {
+app.listen(process.env.PORT || 6666, function (err) {
   if (err) {
     return console.log(err);
   }
